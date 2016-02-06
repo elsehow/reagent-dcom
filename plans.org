@@ -1,0 +1,18 @@
+* little view things
+** DONE setup with figwheel
+** DONE first try with a little home page widget
+** DONE the edges of the system in some regard
+** DONE data model for a room
+*** name
+*** participants 
+**** {:name :color}
+*** messages
+**** {:color :message :time]
+** TODO figure out how join! button wuld "do things"
+** TODO make a high-level room
+*** TODO map message-view over list of messages
+*** TODO do it with fake data in figwheel
+* implementing outside the view
+** a real, centralized data store for the application
+** figuring out websockets or whatever else it might be
+** and https/wss
