@@ -5,10 +5,11 @@
               [secretary.core :as secretary :include-macros true]
               [accountant.core :as accountant]
               [cljs-time.coerce :refer [from-long]]
+              [clojure.string :refer [join]]
               ))
 
 ;; -------------------------
-;; Viewsk
+;; Views
 
 (defn message [msg]
   "Makes a div for a single message."
@@ -17,16 +18,17 @@
     :style
             (if (:self msg)
               {
-               :border-left "5px solid"
-               :border-left-color (:color msg)
-               :padding-left "15px"
-               }
-              {
                :border-right "5px solid"
                :border-right-color (:color msg)
                :padding-right "15px"
                :text-align "right"
-               })}
+               }
+              {
+               :border-left "5px solid"
+               :border-left-color (:color msg)
+               :padding-left "15px"
+               }
+              )}
                
    [:p
     {:style {:margin-bottom "-10px"
@@ -37,14 +39,26 @@
      " "
      (:sender msg)
      )]
-   [:p
-    (:text msg)]])
+   (if (:texts msg)
+     (for [t (:texts msg)]
+       [:p (:text msg)])
+     [:p (:text msg)])])
+
+(defn group [messages]
+  "Groups sequential messages by the same sender."
+  (let [concatinate (fn [msgs]
+                      (assoc (first msgs) :texts
+                             (map :text msgs)))
+        grouped-msgs (partition-by :sender messages)]
+    (map concatinate grouped-msgs)))
 
 (defn conversation [msgs]
-  "Takes a list of messages and produces a convsation."
-  [:div
-   (for [msg (sort-by :time msgs)]
-     ^{:key msg} [message msg])])
+  "Takes a list of messages and produces a conversation."
+  (let [sorted (sort-by :time msgs)
+        grouped (group sorted)]
+    [:div
+     (for [msg grouped]
+       ^{:key msg} [message msg])]))
 
 
 (defn home-page []
